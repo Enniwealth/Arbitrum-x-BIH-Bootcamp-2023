@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DAO Voting</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dotenv@10.0.0/dist/dotenv.js"></script>
+</head>
+<body>
+    <h1>DAO Voting</h1>
+
+    <script>
+        // Load environment variables from .env file
+        dotenv.config();
+
+        // Connect to an Ethereum node
+        const provider = new ethers.providers.JsonRpcProvider("https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID");
+
+        // Create a wallet instance
+        const privateKey = process.env.PRIVATE_KEY;
+        const wallet = new ethers.Wallet(privateKey, provider);
+
+        // Define the contract ABI and address
+        const abi = [...]; // Insert the ABI of your DAO contract
+        const address = "0x054845d8Ec5a0d7daC2a41802b3f7641Cb9C059A";
+
+        // Create a contract instance
+        const contract = new ethers.Contract(address, abi, wallet);
+
+        // Example: Vote in the DAO
+        async function vote(proposalId) {
+            try {
+                const tx = await contract.vote(proposalId);
+                console.log('Transaction hash:', tx.hash);
+                await tx.wait();
+                console.log('Vote cast successfully');
+            } catch (error) {
+                console.error('Error casting vote:', error);
+            }
+        }
+
+        // Example usage
+        const proposalId = 1; // Specify the proposal ID to vote on
+        vote(proposalId);
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NFT Marketplace Interaction</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+</head>
+<body>
+    <h1>NFT Marketplace Interaction</h1>
+
+    <script>
+        // Connect to an Ethereum node
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+        // Define the contract ABI and address
+        const abi = [...]; // Insert the ABI of your NFTMarketplace contract
+        const address = "0x62A6349b9112D64a465D15F4623001CcA00EbAc6";
+
+        // Create a wallet instance
+        const privateKey = "YOUR_PRIVATE_KEY";
+        const wallet = new ethers.Wallet(privateKey, provider);
+
+        // Create a contract instance
+        const contract = new ethers.Contract(address, abi, wallet);
+
+        // Example: List an NFT
+        async function listNFT(tokenId, price) {
+            const nonce = await wallet.getTransactionCount();
+            const message = ethers.utils.solidityKeccak256(
+                ["address", "uint256", "uint256", "uint256"],
+                [wallet.address, tokenId, price, nonce]
+            );
+            const signature = await wallet.signMessage(ethers.utils.arrayify(message));
+
+            try {
+                const tx = await contract.listNFT(tokenId, price, nonce, signature);
+                console.log('Transaction hash:', tx.hash);
+                await tx.wait();
+                console.log('NFT listed successfully');
+            } catch (error) {
+                console.error('Error listing NFT:', error);
+            }
+        }
+
+        // Example usage
+        const tokenId = 1;
+        const price = ethers.utils.parseEther("1");
+        listNFT(tokenId, price);
+    </script>
+</body>
+</html>
